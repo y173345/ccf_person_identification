@@ -16,11 +16,15 @@ int main(int argc, char** argv) {
     std::unique_ptr<cvk::ChannelBank> channel_bank(new cvk::ChannelBank());
     channel_bank->addExtractor(std::make_shared<cvk::CNNChannelExtractor<10, 10>>(data_dir + "/cnn_params_tiny"));
     // channel_bank->addExtractor(std::make_shared<cvk::CNNChannelExtractorGPU<10, 10>>(data_dir + "/cnn_params_tiny"));
-
+    std::cout << DLIB_USE_CUDA << std::endl;
+    // auto test(new dlib::gpu_data());
+    // test->copy_to_device();
     // train the classifier with the first ten frames, and test it with the rest frames
-    for(int i=1; i<=14; i++) {
-        cv::Mat bgr = cv::imread((boost::format("%s/p%02d.jpg") % dataset_dir % i).str());
+    for(int i=1; ; i++) {
+        int num = ((i - 1) % 4) + 1; 
+        cv::Mat bgr = cv::imread((boost::format("%s/t%02d.jpg") % dataset_dir % num).str());
         cv::resize(bgr, bgr, cv::Size(128, 256));
+        // cv::resize(bgr, bgr, cv::Size(1024, 2048));
 
         if(!bgr.data) {
             std::cerr << "error : failed to open image!! image_id: " << i << std::endl;
@@ -43,6 +47,6 @@ int main(int argc, char** argv) {
         cv::Mat canvas;
         cv::hconcat(feature_maps, canvas);
         cv::imshow("features", canvas);
-        cv::waitKey(0);
+        // cv::waitKey(0);
     }
 }
